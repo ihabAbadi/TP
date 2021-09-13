@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, make_response, g
-from redis import Redis
+from redis import StrictRedis
 import os
 import socket
 import random
@@ -17,8 +17,7 @@ app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.INFO)
 
 def get_redis():
-    if not hasattr(g, 'redis'):
-        g.redis = Redis(host=os.getenv('SERVER_REDIS'), db=0, socket_timeout=5)
+    g.redis = StrictRedis(host=os.getenv('SERVER_REDIS', 'localhost'), port=6379)        
     return g.redis
 
 @app.route("/", methods=['POST','GET'])
