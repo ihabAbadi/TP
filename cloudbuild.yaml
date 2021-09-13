@@ -21,6 +21,7 @@ steps:
         - 'europe-west3'
         - '--port'
         - '4000'
+        - 'allow-unauthenticated'
     - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
       waitFor: [worker]
       entrypoint : gcloud
@@ -32,6 +33,7 @@ steps:
         - 'gcr.io/cellular-axon-325108/worker-ihab'
         - '--region'
         - 'europe-west3'
+        - 'allow-unauthenticated'
     - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
       waitFor: [vote]
       entrypoint : gcloud
@@ -45,4 +47,5 @@ steps:
         - 'europe-west3'
         - '--port'
         - '80'
+        - 'allow-unauthenticated'
 images: ['gcr.io/cellular-axon-325108/vote-ihab', 'gcr.io/cellular-axon-325108/worker-ihab', 'gcr.io/cellular-axon-325108/result-ihab']
