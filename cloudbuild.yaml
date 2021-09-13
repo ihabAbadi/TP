@@ -1,8 +1,48 @@
 steps:
     - name: 'gcr.io/cloud-builders/docker'
       args: ['build', '-t', 'gcr.io/cellular-axon-325108/result-ihab','./result']
+      id: result
     - name: 'gcr.io/cloud-builders/docker'
       args: ['build', '-t', 'gcr.io/cellular-axon-325108/worker-ihab','./worker']
+      id: worker
     - name: 'gcr.io/cloud-builders/docker'
       args: ['build', '-t', 'gcr.io/cellular-axon-325108/vote-ihab','./vote']
+      id: vote
+    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+      waitFor: [result]
+      entrypoint : gcloud
+      args : 
+        - 'run'
+        - 'deploy' 
+        - 'service-result-ihab'
+        - '--image'
+        - 'gcr.io/cellular-axon-325108/result-ihab'
+        - '--region'
+        - 'europe-west3'
+        - '--port'
+        - '4000'
+    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+      waitFor: [worker]
+      entrypoint : gcloud
+      args : 
+        - 'run'
+        - 'deploy' 
+        - 'service-worker-ihab'
+        - '--image'
+        - 'gcr.io/cellular-axon-325108/worker-ihab'
+        - '--region'
+        - 'europe-west3'
+    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+      waitFor: [vote]
+      entrypoint : gcloud
+      args : 
+        - 'run'
+        - 'deploy' 
+        - 'service-vote-ihab'
+        - '--image'
+        - 'gcr.io/cellular-axon-325108/vote-ihab'
+        - '--region'
+        - 'europe-west3'
+        - '--port'
+        - '80'
 images: ['gcr.io/cellular-axon-325108/vote-ihab', 'gcr.io/cellular-axon-325108/worker-ihab', 'gcr.io/cellular-axon-325108/result-ihab']
